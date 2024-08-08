@@ -1,8 +1,9 @@
-import pandas as pd
 import numpy as np
-from PIL import Image, ImageOps
-import argparse
+from PIL import Image
 import csv
+import argparse
+import os
+import sys
 
 class TIFFToCSVConverter:
     def __init__(self, file, output):
@@ -22,16 +23,20 @@ class TIFFToCSVConverter:
         try:
             # Open the TIFF file
             img = Image.open(self.file)
-            
-            # Convert image to grayscale if it's not already
-            if img.mode != 'L':
-                img = ImageOps.grayscale(img)
-            
-            # Convert image data to numpy array
-            img_data = np.array(img)
+            img = np.array(img)
+
 
             # Get the dimensions of the image
-            height, width = img_data.shape
+            height, width = img.shape
+
+            if self.output.endswith('.csv'):
+                self.output = self.output[:-4]
+
+            # if output exists, delete it
+            try:
+                os.remove(self.output + '.csv')
+            except FileNotFoundError:
+                pass
 
             # Open the output CSV file
             with open(self.output + '.csv', mode='w', newline='') as file:
@@ -39,11 +44,12 @@ class TIFFToCSVConverter:
                 writer.writerow(['idx', 'classId'])
 
                 # Convert the image data to the desired CSV format
-                non_zero_indices = np.argwhere(img_data != 0)
-                for y, x in non_zero_indices:
-                    idx = y * width + x
-                    classId = img_data[y, x]
-                    writer.writerow([idx, classId])
+                for y in range(height):
+                    for x in range(width):
+                        classId = img[y, x]
+                        if classId != 0.0:  # Skip 0.0 values
+                            idx = y * width + x
+                            writer.writerow([idx, classId])
         except Exception as e:
             print(f"An error occurred: {e}")
 
