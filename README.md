@@ -1,4 +1,4 @@
-# TIFF to CSV Converter
+# GeoTIFF to CSV Converter
 
 ## Overview
 
