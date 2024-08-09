@@ -1,9 +1,9 @@
 import numpy as np
-from PIL import Image
 import csv
 import argparse
 import os
 import sys
+import tifffile
 
 class TIFFToCSVConverter:
     def __init__(self, file, output):
@@ -21,10 +21,8 @@ class TIFFToCSVConverter:
         Convert the TIFF file to a CSV file.
         """
         try:
-            # Open the TIFF file
-            img = Image.open(self.file)
-            img = np.array(img)
-
+            # Increase the maximum image size to avoid errors
+            img = tifffile.imread(self.file)
 
             # Get the dimensions of the image
             height, width = img.shape
@@ -47,7 +45,8 @@ class TIFFToCSVConverter:
                 for y in range(height):
                     for x in range(width):
                         classId = img[y, x]
-                        if classId != 0.0:  # Skip 0.0 values
+                        # Skip 0.0 values and NaN values
+                        if classId != 0.0 and not np.isnan(classId):
                             idx = y * width + x
                             writer.writerow([idx, classId])
         except Exception as e:
