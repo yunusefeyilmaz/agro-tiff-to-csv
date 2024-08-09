@@ -4,6 +4,8 @@
 
 This script converts GeoTIFF files to CSV format, suitable for use with QGIS. Each pixel value in the TIFF image is represented as a row in the resulting CSV file.
 
+For converting CSV files to GeoTIFF format, refer to the ***[CSV to GeoTIFF Converter repository](https://github.com/yunusefeyilmaz/agro-csv-to-tiff)**.
+
 ## Features
 
 - **GeoTIFF Compatibility**: Processes GeoTIFF files for use with QGIS.
